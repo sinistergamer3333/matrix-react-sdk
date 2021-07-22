@@ -32,6 +32,7 @@ import { avatarUrlForMember } from '../../../Avatar';
 import DialpadContextMenu from '../context_menus/DialpadContextMenu';
 import { CallFeed } from 'matrix-js-sdk/src/webrtc/callFeed';
 import { replaceableComponent } from "../../../utils/replaceableComponent";
+import { CallViewHeader } from './CallView/CallViewHeader';
 
 interface IProps {
         // The call for us to display
@@ -211,21 +212,6 @@ export default class CallView extends React.Component<IProps, IState> {
         });
     };
 
-    private onFullscreenClick = () => {
-        dis.dispatch({
-            action: 'video_fullscreen',
-            fullscreen: true,
-        });
-    };
-
-    private onExpandClick = () => {
-        const userFacingRoomId = CallHandler.sharedInstance().roomIdForCall(this.props.call);
-        dis.dispatch({
-            action: 'view_room',
-            room_id: userFacingRoomId,
-        });
-    };
-
     private onControlsHideTimer = () => {
         this.controlsHideTimer = null;
         this.setState({
@@ -345,23 +331,6 @@ export default class CallView extends React.Component<IProps, IState> {
             ev.stopPropagation();
             ev.preventDefault();
         }
-    };
-
-    private onRoomAvatarClick = () => {
-        const userFacingRoomId = CallHandler.sharedInstance().roomIdForCall(this.props.call);
-        dis.dispatch({
-            action: 'view_room',
-            room_id: userFacingRoomId,
-        });
-    };
-
-    private onSecondaryRoomAvatarClick = () => {
-        const userFacingRoomId = CallHandler.sharedInstance().roomIdForCall(this.props.secondaryCall);
-
-        dis.dispatch({
-            action: 'view_room',
-            room_id: userFacingRoomId,
-        });
     };
 
     private onCallResumeClick = () => {
@@ -660,72 +629,16 @@ export default class CallView extends React.Component<IProps, IState> {
             </div>;
         }
 
-        const callTypeText = this.props.call.type === CallType.Video ? _t("Video Call") : _t("Voice Call");
-        let myClassName;
-
-        let fullScreenButton;
-        if (this.props.call.type === CallType.Video && !this.props.pipMode) {
-            fullScreenButton = <div className="mx_CallView_header_button mx_CallView_header_button_fullscreen"
-                onClick={this.onFullscreenClick} title={_t("Fill Screen")}
-            />;
-        }
-
-        let expandButton;
-        if (this.props.pipMode) {
-            expandButton = <div className="mx_CallView_header_button mx_CallView_header_button_expand"
-                onClick={this.onExpandClick} title={_t("Return to call")}
-            />;
-        }
-
-        const headerControls = <div className="mx_CallView_header_controls">
-            { fullScreenButton }
-            { expandButton }
-        </div>;
-
-        let header: React.ReactNode;
-        if (!this.props.pipMode) {
-            header = <div className="mx_CallView_header">
-                <div className="mx_CallView_header_phoneIcon"></div>
-                <span className="mx_CallView_header_callType">{ callTypeText }</span>
-                { headerControls }
-            </div>;
-            myClassName = 'mx_CallView_large';
-        } else {
-            let secondaryCallInfo;
-            if (this.props.secondaryCall) {
-                secondaryCallInfo = <span className="mx_CallView_header_secondaryCallInfo">
-                    <AccessibleButton element='span' onClick={this.onSecondaryRoomAvatarClick}>
-                        <RoomAvatar room={secCallRoom} height={16} width={16} />
-                        <span className="mx_CallView_secondaryCall_roomName">
-                            { _t("%(name)s on hold", { name: secCallRoom.name }) }
-                        </span>
-                    </AccessibleButton>
-                </span>;
-            }
-
-            header = (
-                <div
-                    className="mx_CallView_header"
-                    onMouseDown={this.props.onMouseDownOnHeader}
-                >
-                    <AccessibleButton onClick={this.onRoomAvatarClick}>
-                        <RoomAvatar room={callRoom} height={32} width={32} />
-                    </AccessibleButton>
-                    <div className="mx_CallView_header_callInfo">
-                        <div className="mx_CallView_header_roomName">{ callRoom.name }</div>
-                        <div className="mx_CallView_header_callTypeSmall">
-                            { callTypeText }
-                            { secondaryCallInfo }
-                        </div>
-                    </div>
-                    { headerControls }
-                </div>
-            );
-            myClassName = 'mx_CallView_pip';
-        }
+        const myClassName = this.props.pipMode ? 'mx_CallView_pip' : 'mx_CallView_large';
 
         return <div className={"mx_CallView " + myClassName}>
-            { header }
+            <CallViewHeader
+                onPipMouseDown={this.props.onMouseDownOnHeader}
+                pipMode={this.props.pipMode}
+                callType={this.props.call.type}
+                callRoom={callRoom}
+                secondCallRoom={secCallRoom}
+            />
             { contentView }
             { dialPad }
             { contextMenu }
