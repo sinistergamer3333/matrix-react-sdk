@@ -25,6 +25,7 @@ import { replaceableComponent } from "../../../utils/replaceableComponent";
 import ReactionsRowButtonTooltip from "./ReactionsRowButtonTooltip";
 import AccessibleButton from "../elements/AccessibleButton";
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
+import { mediaFromMxc } from "../../../customisations/Media";
 
 interface IProps {
     // The event we're displaying reactions for
@@ -90,6 +91,16 @@ export default class ReactionsRowButton extends React.PureComponent<IProps, ISta
     render() {
         const { mxEvent, content, count, reactionEvents, myReactionEvent } = this.props;
 
+        let contentElem: any = content;
+        if (content.startsWith("mxc://")) {
+            const size = 18;
+            const url = mediaFromMxc(content).getThumbnailOfSourceHttp(200, size, "scale");
+            contentElem = <img
+                src={url}
+                height={size}
+            />;
+        }
+
         const classes = classNames({
             mx_ReactionsRowButton: true,
             mx_ReactionsRowButton_selected: !!myReactionEvent,
@@ -142,7 +153,7 @@ export default class ReactionsRowButton extends React.PureComponent<IProps, ISta
             onMouseLeave={this.onMouseLeave}
         >
             <span className="mx_ReactionsRowButton_content" aria-hidden="true">
-                { content }
+                {contentElem}
             </span>
             <span className="mx_ReactionsRowButton_count" aria-hidden="true">
                 { count }

@@ -1,4 +1,9 @@
 {
+    "New Emote": "New Emote",
+    "Upload Image": "Upload Image",
+    "Image URL": "Image URL",
+    "Add a new emote with 'New Emote'. Use the 'Upload Image' button to set emote images. You can use emotes in a room by typing a ':' and then typing in the emote name." : "Add a new emote with 'New Emote'. Use the 'Upload Image' button to set emote images. You can use emotes in a room by typing a ':' and then typing in the emote name.",
+    "Emotes": "Emotes",
     "Add a widget": "Add a widget",
     "AM": "AM",
     "PM": "PM",

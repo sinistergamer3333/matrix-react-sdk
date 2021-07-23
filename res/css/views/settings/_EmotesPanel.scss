@@ -1,0 +1,16 @@
+
+.mx_EmotesUserSettingsTab .mx_AccessibleButton {
+    // Pad out buttons a bit
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
+.mx_EmotesUserSettingsTab .mx_Field_input {
+    // Fix spacing between emote entries
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+.mx_EmotesPanel_file > input {
+    display: none;
+}

@@ -41,6 +41,8 @@ export function mdSerialize(model: EditorModel) {
             case "user-pill":
                 return html +
                     `[${part.text.replace(/[[\\\]]/g, c => "\\" + c)}](${makeGenericPermalink(part.resourceId)})`;
+            case "emote":
+                return html + `![${part.code}](emote:${part.mxc})`;
         }
     }, "");
 }
@@ -115,8 +117,11 @@ export function htmlSerializeIfNeeded(model: EditorModel, { forceHTML = false } 
 
     const parser = new Markdown(md);
     if (!parser.isPlainText() || forceHTML) {
+        let html = parser.toHTML();
+        // we need to make emotes nicer
+        html = html.replace(/<img +src="emote:([^"]+)" +alt="([^"]+)"/gi, '<img data-mx-emoticon src="$1" height="48" alt="$2" title="$2" vertical-align="middle"');
         // feed Markdown output to HTML parser
-        const phtml = cheerio.load(parser.toHTML(), {
+        const phtml = cheerio.load(html, {
             // @ts-ignore: The `_useHtmlParser2` internal option is the
             // simplest way to both parse and render using `htmlparser2`.
             _useHtmlParser2: true,

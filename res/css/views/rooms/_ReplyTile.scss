@@ -68,9 +68,17 @@ limitations under the License.
         -webkit-line-clamp: $reply-lines;
         line-height: $line-height;
 
+        .mx_EventTile_body img[data-mx-emoticon], .mx_EventTile_body img[data-mx-emote] {
+            height: 2rem !important;
+        }
+
         .mx_EventTile_body.mx_EventTile_bigEmoji {
             line-height: $line-height !important;
             font-size: $font-14px !important; // Override the big emoji override
+        }
+
+        .mx_EventTile_bigEmoji img[data-mx-emoticon], .mx_EventTile_bigEmoji img[data-mx-emote] {
+            height: 14px !important;
         }
 
         // Hide line numbers

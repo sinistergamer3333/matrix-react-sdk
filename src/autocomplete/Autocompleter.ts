@@ -25,8 +25,10 @@ import RoomProvider from './RoomProvider';
 import UserProvider from './UserProvider';
 import EmojiProvider from './EmojiProvider';
 import NotifProvider from './NotifProvider';
-import { timeout } from "../utils/promise";
-import AutocompleteProvider, { ICommand } from "./AutocompleteProvider";
+import EmoteProvider from './EmoteProvider';
+import {timeout} from "../utils/promise";
+import AutocompleteProvider, {ICommand} from "./AutocompleteProvider";
+import SettingsStore from "../settings/SettingsStore";
 import SpaceProvider from "./SpaceProvider";
 import SpaceStore from "../stores/SpaceStore";
 
@@ -37,7 +39,7 @@ export interface ISelectionRange {
 }
 
 export interface ICompletion {
-    type: "at-room" | "command" | "community" | "room" | "user";
+    type: "at-room" | "command" | "community" | "room" | "user" | "emote";
     completion: string;
     completionId?: string;
     component?: ReactElement;
@@ -50,11 +52,13 @@ export interface ICompletion {
 }
 
 const PROVIDERS = [
+    EmoteProvider,
     UserProvider,
     RoomProvider,
     EmojiProvider,
     NotifProvider,
     CommandProvider,
+    CommunityProvider,
     DuckDuckGoProvider,
 ];
 

@@ -20,7 +20,7 @@ limitations under the License.
 import React from 'react';
 import { _t } from '../languageHandler';
 import AutocompleteProvider from './AutocompleteProvider';
-import { PillCompletion } from './Components';
+import {PillCompletion} from './Components';
 import QueryMatcher from './QueryMatcher';
 import { sortBy } from 'lodash';
 import { MatrixClientPeg } from '../MatrixClientPeg';

@@ -130,6 +130,9 @@ export default class AutocompleteWrapperModel {
             case "command":
                 // command needs special handling for auto complete, but also renders as plain texts
                 return [(this.partCreator as CommandPartCreator).command(text)];
+            case "emote":
+                // we have an emote
+                return [this.partCreator.emote(completionId, completion.completion), this.partCreator.plain(completion.suffix)];
             default:
                 // used for emoji and other plain text completion replacement
                 return [this.partCreator.plain(text)];

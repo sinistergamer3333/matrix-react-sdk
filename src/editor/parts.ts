@@ -25,6 +25,7 @@ import AutocompleteWrapperModel, {
     UpdateQuery,
 } from "./autocomplete";
 import * as Avatar from "../Avatar";
+import { mediaFromMxc } from "../customisations/Media";
 
 interface ISerializedPart {
     type: Type.Plain | Type.Newline | Type.Command | Type.PillCandidate;
@@ -37,7 +38,14 @@ interface ISerializedPillPart {
     resourceId?: string;
 }
 
-export type SerializedPart = ISerializedPart | ISerializedPillPart;
+interface ISerializedEmotePart {
+    type: Type.Emote;
+    code: string;
+    mxc: string;
+    text: string;
+}
+
+export type SerializedPart = ISerializedPart | ISerializedPillPart | ISerializedEmotePart;
 
 enum Type {
     Plain = "plain",
@@ -47,6 +55,7 @@ enum Type {
     RoomPill = "room-pill",
     AtRoomPill = "at-room-pill",
     PillCandidate = "pill-candidate",
+    Emote = "emote",
 }
 
 interface IBasePart {
@@ -76,7 +85,13 @@ interface IPillPart extends Omit<IBasePart, "type" | "resourceId"> {
     resourceId: string;
 }
 
-export type Part = IBasePart | IPillCandidatePart | IPillPart;
+interface IEmotePart extends Omit<IBasePart, "type" | "resourceId"> {
+    type: Type.Emote;
+    mxc: string;
+    code: string;
+}
+
+export type Part = IBasePart | IPillCandidatePart | IPillPart | IEmotePart;
 
 abstract class BasePart {
     protected _text: string;
@@ -411,6 +426,67 @@ class UserPillPart extends PillPart {
     }
 }
 
+class EmotePart extends BasePart implements IEmotePart {
+    public mxc: string;
+    public code: string;
+
+    constructor(mxc, code) {
+        super(code);
+        this.mxc = mxc;
+        this.code = code;
+    }
+
+    acceptsInsertion(chr, offset, inputType) {
+        return true;
+    }
+
+    acceptsRemoval(position, chr) {
+        return true;
+    }
+
+    toDOMNode() {
+        const img = document.createElement("img");
+        const url = mediaFromMxc(this.mxc).getThumbnailOfSourceHttp(36, 36, "crop");
+        img.src = url;
+        img.width = 36;
+        img.height = 36;
+        img.alt = this.code;
+        return img;
+    }
+
+    merge() {
+        return false;
+    }
+
+    updateDOMNode(node) {
+        const url = mediaFromMxc(this.mxc).getThumbnailOfSourceHttp(36, 36, "crop");
+        node.src = url;
+        node.alt = this.code;
+    }
+
+    canUpdateDOMNode(node) {
+        return node.tagName === "IMG";
+    }
+
+    get canEdit() {
+        return false;
+    }
+
+    get type(): IEmotePart["type"] {
+        return Type.Emote;
+    }
+
+    serialize(): ISerializedEmotePart {
+        return {
+            type: this.type,
+            code: this.code,
+            mxc: this.mxc,
+            text: "",
+        };
+    }
+}
+
+
 class PillCandidatePart extends PlainBasePart implements IPillCandidatePart {
     constructor(text: string, private autoCompleteCreator: IAutocompleteCreator) {
         super(text);
@@ -505,6 +581,8 @@ export class PartCreator {
                 return this.roomPill(part.resourceId);
             case Type.UserPill:
                 return this.userPill(part.text, part.resourceId);
+            case "emote":
+                return this.emote(part.mxc, part.code);
         }
     }
 
@@ -540,6 +618,9 @@ export class PartCreator {
     userPill(displayName: string, userId: string) {
         const member = this.room.getMember(userId);
         return new UserPillPart(userId, displayName, member);
+    }
+    emote(mxid, code) {
+        return new EmotePart(mxid, code);
     }
 
     createMentionParts(insertTrailingCharacter: boolean, displayName: string, userId: string) {

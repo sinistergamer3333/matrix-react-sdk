@@ -27,6 +27,7 @@ import BridgeSettingsTab from "../settings/tabs/room/BridgeSettingsTab";
 import { MatrixClientPeg } from "../../../MatrixClientPeg";
 import dis from "../../../dispatcher/dispatcher";
 import SettingsStore from "../../../settings/SettingsStore";
+import EmotesRoomSettingsTab from "../settings/tabs/room/EmotesRoomSettingsTab";
 import { UIFeature } from "../../../settings/UIFeature";
 import { replaceableComponent } from "../../../utils/replaceableComponent";
 import BaseDialog from "./BaseDialog";
@@ -37,6 +38,8 @@ export const ROOM_ROLES_TAB = "ROOM_ROLES_TAB";
 export const ROOM_NOTIFICATIONS_TAB = "ROOM_NOTIFICATIONS_TAB";
 export const ROOM_BRIDGES_TAB = "ROOM_BRIDGES_TAB";
 export const ROOM_ADVANCED_TAB = "ROOM_ADVANCED_TAB";
+export const ROOM_EMOTES_TAB = "ROOM_EMOTES_TAB";
+
 
 interface IProps {
     roomId: string;
@@ -92,6 +95,13 @@ export default class RoomSettingsDialog extends React.Component<IProps> {
             _td("Notifications"),
             "mx_RoomSettingsDialog_notificationsIcon",
             <NotificationSettingsTab roomId={this.props.roomId} />,
+        ));
+
+        tabs.push(new Tab(
+            ROOM_EMOTES_TAB,
+            _td("Emotes"),
+            "mx_MessageComposer_emoji",
+            <EmotesRoomSettingsTab roomId={this.props.roomId} />,
         ));
 
         if (SettingsStore.getValue("feature_bridge_state")) {

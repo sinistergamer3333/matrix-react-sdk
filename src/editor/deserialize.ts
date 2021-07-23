@@ -60,6 +60,12 @@ function parseLink(a: HTMLAnchorElement, partCreator: PartCreator) {
     }
 }
 
+function parseEmote(img: HTMLImageElement, partCreator: PartCreator) {
+    const src = img.src;
+    const alt = img.alt || img.title || "";
+    return partCreator.emote(src, alt);
+}
+
 function parseImage(img: HTMLImageElement, partCreator: PartCreator) {
     const { src } = img;
     return partCreator.plain(`![${img.alt.replace(/[[\\\]]/g, c => "\\" + c)}](${src})`);
@@ -108,7 +114,7 @@ function parseElement(n: HTMLElement, partCreator: PartCreator, lastNode: HTMLEl
         case "A":
             return parseLink(<HTMLAnchorElement>n, partCreator);
         case "IMG":
-            return parseImage(<HTMLImageElement>n, partCreator);
+            return parseEmote(<HTMLImageElement>n, partCreator);
         case "BR":
             return partCreator.newline();
         case "EM":

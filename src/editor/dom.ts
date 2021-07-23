@@ -138,6 +138,12 @@ function getTextAndOffsetToNode(editor: HTMLDivElement, selectionNode: Node) {
             }
             text += "\n";
         }
+        if (node.tagName === "IMG") {
+            if (!foundNode) {
+                offsetToNode += node.alt.length;
+            }
+            text += node.alt;
+        }
         const nodeText = node.nodeType === Node.TEXT_NODE && getTextNodeValue(node);
         if (nodeText) {
             if (!foundNode) {

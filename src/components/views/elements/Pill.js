@@ -57,6 +57,8 @@ class Pill extends React.Component {
         shouldShowPillAvatar: PropTypes.bool,
         // Whether to render this pill as if it were highlit by a selection
         isSelected: PropTypes.bool,
+        // the content the pill shall have
+        content: PropTypes.string,
     };
 
     state = {

@@ -136,10 +136,10 @@ export interface ISetting {
 }
 
 export const SETTINGS: {[setting: string]: ISetting} = {
-    "feature_report_to_moderators": {
+
+    "feature_interplanetary_time": {
         isFeature: true,
-        displayName: _td("Report to moderators prototype. " +
-            "In rooms that support moderation, the `report` button will let you report abuse to room moderators"),
+        displayName: _td("IPT Format Timestamps"),
         supportedLevels: LEVELS_FEATURE,
         default: false,
     },

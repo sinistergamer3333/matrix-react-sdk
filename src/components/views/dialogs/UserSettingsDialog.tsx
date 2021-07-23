@@ -33,6 +33,8 @@ import MjolnirUserSettingsTab from "../settings/tabs/user/MjolnirUserSettingsTab
 import { UIFeature } from "../../../settings/UIFeature";
 import { replaceableComponent } from "../../../utils/replaceableComponent";
 import BaseDialog from "./BaseDialog";
+import EmotesUserSettingsTab from "../settings/tabs/user/EmotesUserSettingsTab";
+
 
 export enum UserTab {
     General = "USER_GENERAL_TAB",
@@ -45,6 +47,7 @@ export enum UserTab {
     Labs = "USER_LABS_TAB",
     Mjolnir = "USER_MJOLNIR_TAB",
     Help = "USER_HELP_TAB",
+    Emotes = "USER_EMOTES_TAB",
 }
 
 interface IProps {
@@ -132,6 +135,14 @@ export default class UserSettingsDialog extends React.Component<IProps, IState> 
             "mx_UserSettingsDialog_securityIcon",
             <SecurityUserSettingsTab closeSettingsFn={this.props.onFinished} />,
         ));
+
+        tabs.push(new Tab(
+            UserTab.Emotes,
+            _td("Emotes"),
+            "mx_MessageComposer_emoji",
+            <EmotesUserSettingsTab closeSettingsFn={this.props.onFinished} />,
+        ));
+
         // Show the Labs tab if enabled or if there are any active betas
         if (SdkConfig.get()['showLabsSettings']
             || SettingsStore.getFeatureSettingNames().some(k => SettingsStore.getBetaInfo(k))
